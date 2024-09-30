@@ -1,0 +1,117 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NCERT AI Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+    <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+        <h1 class="text-2xl font-bold mb-4">AI Assistant - Ask anything Sound Related or General Queries</h1>
+        <form id="query-form" class="space-y-4">
+            <div>
+                <label for="question" class="block text-sm font-medium text-gray-700">Ask a question:</label>
+                <input type="text" id="question" name="question" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+            </div>
+            <button type="submit" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                Submit Query
+            </button>
+        </form>
+        <div id="response" class="mt-4 p-4 bg-gray-100 rounded-md hidden">
+            <h2 class="text-lg font-semibold mb-2">Response:</h2>
+            <p id="response-text"></p>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('query-form');
+        const responseDiv = document.getElementById('response');
+        const responseText = document.getElementById('response-text');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(form);
+            const response = await fetch('/query', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await response.json();
+            responseText.textContent = data.response;
+            responseDiv.classList.remove('hidden');
+        });
+    </script>
+</body>
+</html> -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Assistant - Sound Related and General Queries</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+        <h1 class="text-2xl font-bold mb-4">AI Assistant - Ask anything Sound Related or General Queries</h1>
+        <form id="query-form">
+            <div class="mb-4">
+                <label for="question" class="block text-sm font-medium text-gray-700">Ask a question:</label>
+                <input type="text" id="question" name="question" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+            </div>
+            <button type="submit" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                Submit Query
+            </button>
+        </form>
+        <div id="response" class="mt-4 p-4 bg-gray-100 rounded-md hidden">
+            <h2 class="text-lg font-semibold mb-2">Response:</h2>
+            <p id="text-response"></p>
+            <audio id="audio-response" controls class="mt-4 w-full" style="display: none;"></audio>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('query-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const question = document.getElementById('question').value;
+            const response = document.getElementById('response');
+            const textResponse = document.getElementById('text-response');
+            const audioResponse = document.getElementById('audio-response');
+
+            response.classList.add('hidden');
+            textResponse.textContent = 'Loading...';
+
+            try {
+                const res = await fetch('/query', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `question=${encodeURIComponent(question)}`
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    response.classList.remove('hidden');
+                    textResponse.textContent = data.text_response;
+
+                    if (data.audio_response) {
+                        audioResponse.src = `data:audio/wav;base64,${data.audio_response}`;
+                        audioResponse.style.display = 'block';
+                        // audioResponse.play();
+                    } else {
+                        audioResponse.style.display = 'none';
+                    }
+                } else {
+                    throw new Error(data.error || 'An error occurred');
+                }
+            } catch (error) {
+                response.classList.remove('hidden');
+                textResponse.textContent = `Error: ${error.message}`;
+                audioResponse.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
