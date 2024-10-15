@@ -11,5 +11,5 @@ Features
 Prerequisites
 Before running the application, make sure you have installed the following:
 
-Python 3.8+
-Pip
+1. Python 3.8+
+2. Pip
