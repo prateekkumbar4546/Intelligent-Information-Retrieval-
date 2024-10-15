@@ -7,3 +7,9 @@ Features
 3. Text-to-Speech (TTS): Converts generated text responses into speech using Sarvam TTS.
 4. FastAPI: The application is built with FastAPI, providing both HTML and JSON-based responses.
 5. Logging: Logs key events such as received queries and responses.
+
+Prerequisites
+Before running the application, make sure you have installed the following:
+
+Python 3.8+
+Pip
